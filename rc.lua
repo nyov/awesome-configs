@@ -509,3 +509,35 @@ end)
 client.add_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.add_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
+
+-- {{ Autostart
+-- Stuff to run on awesome (re)start
+-- (most of my background programs (screensaver, filemanager daemon, keyring manager, ...) run from ~/.xinitrc, though)
+function autostart(prg, arg_string, parent, screen)
+	-- run_once
+	if not prg then
+		do return nil end
+	end
+	if not arg_string then
+		if not parent then
+			awful.util.spawn_with_shell("pgrep -u $USER -x " .. prg .. " || (" .. prg .. ")",screen)
+		else
+			awful.util.spawn_with_shell("pgrep -u $USER -x " .. prg .. " || (" .. parent .. " " .. prg .. ")",screen)
+		end
+	else
+		if not parent then
+			awful.util.spawn_with_shell("pgrep -u $USER -x " .. prg .. " || (" .. prg .. " " .. arg_string .. ")",screen)
+		else
+			awful.util.spawn_with_shell("pgrep -u $USER -x " .. prg .. " || (" .. parent .. " " .. prg .. " " .. arg_string .. ")",screen)
+		end
+	end
+end
+
+-- run it
+autostart("pidgin", "--force-online")
+autostart("calcurse", nil, terminal .. " -title calcurse -e")
+autostart("irssi", nil, terminal .." -title irssi -e")
+autostart("ncmpcpp", nil, terminal .." -title mpd -e")
+
+awful.util.spawn("gnome-volume-control-applet &")
+-- }}
