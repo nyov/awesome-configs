@@ -400,7 +400,11 @@ awful.rules.rules = {
 			border_color = beautiful.border_normal,
 			focus = true,
 			keys = clientkeys,
-			buttons = clientbuttons
+			buttons = clientbuttons,
+			-- remove window to screen border gaps,
+			-- but can cause uglyness
+			-- (half terminal lines or whatever)
+			size_hints_honor = false
 		}
 	},
 	{
@@ -415,11 +419,56 @@ awful.rules.rules = {
 		rule =       { class = "gimp" },
 		properties = { floating = true }
 	},
--- Set Firefox to always map on tags number 2 of screen 1.
---	{
---		rule =       { class = "Firefox" },
---		properties = { tag = tags[1][2] }
---	},
+	{
+		-- Set Firefox to always map on tags number 2 of screen 1.
+		-- rule =       { class = "Firefox" },
+		rule =       { class = "Iceweasel" },
+		properties = { tag = tags[1][2] }
+	},
+	{
+		rule =       { class = "Opera" },
+		properties = { tag = tags[1][2] }
+	},
+	{
+		rule =       { class = "Chromium" },
+		properties = { tag = tags[1][2] }
+	},
+	{
+		rule =       { class = "Pidgin" },
+		properties = { floating = true, tag = tags[1][3] }
+	},
+	{
+		rule =       { class = "Evolution" },
+		properties = { floating = true, tag = tags[1][3] }
+	},
+	{
+		rule =       { class = "Claws-mail" },
+		properties = { floating = true, tag = tags[1][3] }
+	},
+	{
+		rule =       { class = "Icedove" },
+		properties = { floating = true, tag = tags[1][3] }
+	},
+	{
+		rule =       { name = "luakit" },
+		properties = { tag = tags[1][2] }
+	},
+	{
+		rule =       { name = "calcurse" },
+		properties = { tag = tags[1][3] }
+	},
+	{
+		rule =       { name = "irssi" },
+		properties = { tag = tags[1][4] }
+	},
+	{
+		rule =       { class = "Amarok" },
+		properties = { floating = true, tag = tags[1][5] }
+	},
+	{
+		rule =       { name = "mpd" },
+		properties = { floating = true, tag = tags[1][5] }
+	}
 }
 -- }}}
 
