@@ -1,3 +1,13 @@
+--[[ this is
+  ___ __ _____ _  __ _ ___   ___ __    _____ ______  __ _ ___ 
+ / _ | // / _ \ |/ /|/(_-<  / _ `/ |/|/ / -_|_-< _ \/  ' | -_)
+/_//_|_, /\___/___/  /___/  \_,_/|__,__/\__/___|___/_/_/_|__/ 
+    /___/                                                 2010 ]]
+
+-----------------------------------------------------------------------
+-- awesome configuration file, info at https://awesome.naquadah.org/ --
+-----------------------------------------------------------------------
+
 -- Standard awesome library
 require("awful")
 require("awful.autofocus")
@@ -40,24 +50,25 @@ end
 -- }}}
 
 -- {{{ Variable definitions
--- Themes define colours, icons, and wallpapers
-beautiful.init("/usr/share/awesome/themes/default/theme.lua")
+-- Themes - symlink from themeswitcher
+beautiful.init(awful.util.getdir("config") .. "/current_theme/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "x-terminal-emulator"
+-- x-terminal-emulator can't be aliased to urxvtc when using urxvtd?
+-- (not used anymore for memory consumption reasons, if it fails all terms fail
+--  or all terms get sluggish and fail to redraw)
+--terminal = "urxvtc"
 editor = os.getenv("EDITOR") or "editor"
 editor_cmd = terminal .. " -e " .. editor
 
+themedir = awful.util.getdir("config") .. "/themes/"
+
 -- Default modkey.
--- Usually, Mod4 is the key with a logo between Control and Alt.
--- If you do not like this or do not have such a key,
--- I suggest you to remap Mod4 to another key using xmodmap or other tools.
--- However, you can use another modifier like Mod1, but it may interact with others.
 modkey = "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
-layouts =
-{
+layouts = {
 	awful.layout.suit.floating,
 	awful.layout.suit.tile,
 	awful.layout.suit.tile.left,
@@ -65,8 +76,8 @@ layouts =
 	awful.layout.suit.tile.top,
 	awful.layout.suit.fair,
 	awful.layout.suit.fair.horizontal,
-	awful.layout.suit.spiral,
-	awful.layout.suit.spiral.dwindle,
+--	awful.layout.suit.spiral,
+--	awful.layout.suit.spiral.dwindle,
 	awful.layout.suit.max,
 	awful.layout.suit.max.fullscreen,
 	awful.layout.suit.magnifier
@@ -82,11 +93,41 @@ for s = 1, screen.count() do
 end
 -- }}}
 
+-- {{{ Theme Switcher
+themelist = {}
+
+function theme_load(theme)
+	local cfg_path = awful.util.getdir("config")
+
+	-- Create a symlink from the given theme to ~/.config/awesome/current_theme
+	-- awful.util.spawn("ln -sfn " .. cfg_path .. "/themes/" .. theme .. " " .. cfg_path .. "/current_theme")
+	awful.util.spawn("ln -sfn themes/" .. theme .. " " .. cfg_path .. "/current_theme")
+	awesome.restart()
+end
+
+function theme_menu()
+	-- List theme files and feed the menu table
+	local cmd = "ls -1 " .. themedir
+	local f = io.popen(cmd)
+
+	for l in f:lines() do
+		local item = { l, function () theme_load(l) end }
+		table.insert(themelist, item)
+	end
+
+	f:close()
+end
+
+-- Generate table at startup or restart
+theme_menu()
+-- }}}
+
 -- {{{ Menu
 -- Create a laucher widget and a main menu
 myawesomemenu = {
 	{ "manual", terminal .. " -e man awesome" },
-	{ "edit config", editor_cmd .. " " .. awesome.conffile },
+	{ "edit awesome config", editor_cmd .. " " .. awful.util.getdir("config") .. "/rc.lua" },
+	{ "themes", themelist },
 	{ "restart", awesome.restart },
 	{ "quit", awesome.quit }
 }
