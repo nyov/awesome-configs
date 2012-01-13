@@ -86,10 +86,16 @@ layouts = {
 
 -- {{{ Tags
 -- Define a tag table which hold all screen tags.
-tags = {}
+tags = {
+--	names  = { "☭", "⌥", "☕", "⌤", "☼", "⌘", "⌨", "☠", "✇" },
+	names  = { "☭ sys", "⌥ net", "☕ pim", "⌤ irc", "☼ snd", "⌘ rem", "⌨ dev", "⍜ xsh", "✣ web" },
+--	layout = { layouts[7], layouts[8], layouts[1], layouts[7], layouts[1], layouts[7], layouts[3], layouts[1], layouts[1] }
+	-- apparently I use floats mostly anyway...
+	layout = { layouts[1], layouts[1], layouts[1], layouts[1], layouts[1], layouts[1], layouts[1], layouts[1], layouts[1] }
+}
 for s = 1, screen.count() do
 	-- Each screen has its own tag table.
-	tags[s] = awful.tag({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }, s, layouts[1])
+	tags[s] = awful.tag(tags.names, s, tags.layout)
 end
 -- }}}
 
