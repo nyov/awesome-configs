@@ -8,6 +8,14 @@
 -- awesome configuration file, info at https://awesome.naquadah.org/ --
 -----------------------------------------------------------------------
 
+-- Add overrides to path
+package.path =
+	os.getenv("HOME") .. "/.config/awesome/config/?.lua;" ..
+	os.getenv("HOME") .. "/.config/awesome/config/?/init.lua;" ..
+	os.getenv("HOME") .. "/.config/awesome/lib/?.lua;" ..
+	os.getenv("HOME") .. "/.config/awesome/lib/?/init.lua;" ..
+	package.path
+
 -- Standard awesome library
 require("awful")
 require("awful.autofocus")
@@ -19,6 +27,9 @@ require("naughty")
 
 -- Load Debian menu entries
 require("debian.menu")
+
+-- Vicious Widgets
+require("vicious")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -178,10 +189,24 @@ mylauncher = awful.widget.launcher({
 })
 -- }}}
 
--- {{{ Wibox
--- Create a textclock widget
-mytextclock = awful.widget.textclock({ align = "right" })
+-- {{{ nyov's Widgets
+-- Date
+datewidget = widget({ type = "textbox" })
+vicious.register(datewidget, vicious.widgets.date,
+	'%a %d<span color="#777777">-</span>%m<span color="#777777">-</span>%y ' ..
+	'<span color="#cccccc">%H</span><span color="#777777">:</span><span color="#cccccc">%M</span><span color="#777777">:</span><span color="#eeeeee">%S</span>'
+)
 
+-- Spacer
+spacer = widget({ type = "textbox" })
+spacer.text = " "
+
+-- Separator
+separator = widget({ type = "textbox" })
+separator.text = ' <span color="#cccccc">|</span> '
+-- }}}
+
+-- {{{ Wibox
 -- Create a systray
 mysystray = widget({ type = "systray" })
 
@@ -285,9 +310,13 @@ for s = 1, screen.count() do
 			layout = awful.widget.layout.horizontal.leftright
 		},
 		mylayoutbox[s],
-		mytextclock,
+		spacer,
+		datewidget,				-- date display
+		spacer,
 		s == 1 and mysystray or nil,		-- systray (screen 1)
+		spacer,
 		s == 1 and kbdcfg.widget or nil,	-- keymap switcher (screen 1)
+		spacer,
 		mytasklist[s],
 		layout = awful.widget.layout.horizontal.rightleft
 	}
