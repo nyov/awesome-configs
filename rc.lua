@@ -127,17 +127,43 @@ theme_menu()
 myawesomemenu = {
 	{ "manual", terminal .. " -e man awesome" },
 	{ "edit awesome config", editor_cmd .. " " .. awful.util.getdir("config") .. "/rc.lua" },
+	{ "edit luakit  config", editor_cmd .. " " .. os.getenv("HOME") .. "/.config/luakit/rc.lua" },
 	{ "themes", themelist },
 	{ "restart", awesome.restart },
 	{ "quit", awesome.quit }
 }
 
+myappmenu = {
+	{ "luakit", "luakit", beautiful.appicon.luakit },
+}
+
+mysshmenu = {
+	{ "company1",
+		{
+			-- obviously an example only
+			-- my machine names here are usually aliases,
+			-- their properties (user,port,keyring) defined in
+			-- ~/.ssh/config
+			-- (so I can type 'ssh some-box' in a term, even if it
+			--  tunnels three other boxes to get there beforehand)
+			{ "machine1", terminal .. " -e ssh machine" },
+			{ "machine2", terminal .. " -e ssh -p 10000 -X user@machine" }
+		},
+		beautiful.awesome_icon
+	}
+}
+
 mymainmenu = awful.menu({
 	items = {
 		{ "awesome", myawesomemenu, beautiful.awesome_icon },
-		{ "Debian", debian.menu.Debian_menu.Debian },
-		{ "open terminal", terminal }
-	}
+		{ "debian", debian.menu.Debian_menu.Debian },
+		{ "launcher", myappmenu },
+		{ "ssh", mysshmenu },
+		{ "filer", "thunar" },
+		{ "terminal", terminal },
+		{ "screen lock", function () awful.util.spawn("xscreensaver-command -lock") end }
+	},
+	width = 200
 })
 
 mylauncher = awful.widget.launcher({
@@ -159,12 +185,12 @@ mypromptbox = {}
 mylayoutbox = {}
 mytaglist = {}
 mytaglist.buttons = awful.util.table.join(
-	awful.button({ }, 1, awful.tag.viewonly),
+	awful.button({        }, 1, awful.tag.viewonly),
 	awful.button({ modkey }, 1, awful.client.movetotag),
-	awful.button({ }, 3, awful.tag.viewtoggle),
+	awful.button({        }, 3, awful.tag.viewtoggle),
 	awful.button({ modkey }, 3, awful.client.toggletag),
-	awful.button({ }, 4, awful.tag.viewnext),
-	awful.button({ }, 5, awful.tag.viewprev)
+	awful.button({        }, 4, awful.tag.viewnext),
+	awful.button({        }, 5, awful.tag.viewprev)
 )
 
 mytasklist = {}
@@ -187,7 +213,7 @@ mytasklist.buttons = awful.util.table.join(
 			instance:hide()
 			instance = nil
 		else
-			instance = awful.menu.clients({ width=250 })
+			instance = awful.menu.clients({ width = 250 })
 		end
 	end),
 	awful.button({ }, 4, function ()
