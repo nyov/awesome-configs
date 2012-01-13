@@ -185,6 +185,28 @@ mytextclock = awful.widget.textclock({ align = "right" })
 -- Create a systray
 mysystray = widget({ type = "systray" })
 
+-- Keyboard map indicator and changer
+kbdcfg = {}
+kbdcfg.cmd = "setxkbmap"
+kbdcfg.layout = {
+	"us",
+	"de",
+	"dvorak"
+}
+kbdcfg.current = 1  -- "us" is default layout
+kbdcfg.widget = widget({ type = "textbox", align = "right" })
+kbdcfg.widget.text = " " .. kbdcfg.layout[kbdcfg.current] .. " "
+kbdcfg.switch = function ()
+	kbdcfg.current = kbdcfg.current % #(kbdcfg.layout) + 1
+	local t = " " .. kbdcfg.layout[kbdcfg.current] .. " "
+	kbdcfg.widget.text = t
+	os.execute( kbdcfg.cmd .. t )
+end
+-- Mouse bindings for the widget
+kbdcfg.widget:buttons(awful.util.table.join(
+	awful.button({ }, 1, function () kbdcfg.switch() end)
+))
+
 -- Create a wibox for each screen and add it
 mywibox = {}
 mypromptbox = {}
@@ -264,7 +286,8 @@ for s = 1, screen.count() do
 		},
 		mylayoutbox[s],
 		mytextclock,
-		s == 1 and mysystray or nil,
+		s == 1 and mysystray or nil,		-- systray (screen 1)
+		s == 1 and kbdcfg.widget or nil,	-- keymap switcher (screen 1)
 		mytasklist[s],
 		layout = awful.widget.layout.horizontal.rightleft
 	}
